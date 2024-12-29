@@ -11,6 +11,7 @@ import org.openqa.selenium.WebDriver;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,7 +25,7 @@ public class Init {
 
 
 
-    public static void setUp() throws InterruptedException {
+    public static void setUp() throws InterruptedException, MalformedURLException {
         extent.attachReporter(sparkReporter);
 
         sparkReporter.config().setOfflineMode(Boolean.valueOf(true));
@@ -34,7 +35,7 @@ public class Init {
         sparkReporter.config().setTimeStampFormat("EEEE, MMMM dd, yyyy, hh:mm a '('zzz')'");
         sparkReporter.config().setEncoding("UTF-8");
 
-        if (loginTest.getDriver1()!=null &&loginTest.getDriver1().getWindowHandles().size()>0) {
+        if (LoginLinkedInTest.getDriver1()!=null && !LoginLinkedInTest.getDriver1().getWindowHandles().isEmpty()) {
             System.out.println("Le driver est ouvert.");
 
             // Faire un refresh de la page

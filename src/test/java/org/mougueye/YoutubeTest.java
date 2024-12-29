@@ -1,9 +1,11 @@
 package org.mougueye;
 
+import lombok.Getter;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -15,14 +17,11 @@ import java.util.regex.Pattern;
 
 @Tag("youtubeTest")
 public class YoutubeTest {
-    public static ChromeDriver driver1 =null ;
-   // public static EdgeDriver driver1 =null ;
+    @Getter
+    //public static ChromeDriver driver1 =null ;
+    public static EdgeDriver driver1 =null ;
   //  private static ExtentTest extentTest;
 
-
-    public static ChromeDriver getDriver1() {
-        return driver1;
-    }
     public static long convertToSeconds(String time) {
         // Diviser la chaîne en parties
         String[] parts = time.split(":");
@@ -47,14 +46,10 @@ public class YoutubeTest {
     }
 
     public static boolean isRelevant(double views,  int years) {
-        // Normalisation des critères
-        double normalizedViews = Math.min(views / 700000, 1); // Ex: 1M vues = score max
-        double recency = 1 - (years) / 5.0; // Ex: Pondérer les 5 dernières années
+        double normalizedViews = Math.min(views / 70000, 1);
+        double recency = 1 - (years) / 5.0;
 
-        // Calcul du score de pertinence
         double relevanceScore = 0.5 * normalizedViews +   0.2 * Math.max(0, recency);
-
-        // Définir les conditions de pertinence
         return relevanceScore >= 0.5 &&  recency >= 0.5;
     }
 
@@ -68,8 +63,7 @@ public class YoutubeTest {
                 years = Integer.parseInt(elapsedTime.replace("mois","").trim()) / 12; // Ajouter les mois convertis en années
             }
             else if (elapsedTime.toLowerCase().contains("semaine")) {
-                years = Integer.parseInt(elapsedTime.replace("semaines","").trim())/ 52; // Ajouter les semaines convertis en années
-            }
+                years = Integer.parseInt(elapsedTime.replace("semaines","").trim())/ 52;             }
 
 
         return years;
@@ -89,16 +83,16 @@ public class YoutubeTest {
         return  views;
     }
     @Test
-    public void youtubeSearchVideo() throws InterruptedException,IllegalArgumentException {
-        driver1 = new ChromeDriver();
-        //driver1 = new EdgeDriver();
+    public void youtubeSearchVideo() throws InterruptedException {
+        //driver1 = new ChromeDriver();
+        driver1 = new EdgeDriver();
         driver1.manage().window().maximize();
         driver1.get("https://www.youtube.com/");
-        WebDriverWait wait = new WebDriverWait(driver1,Duration.ofSeconds(200));
+        WebDriverWait wait = new WebDriverWait(driver1,Duration.ofSeconds(60));
 // Champs de recherche
         wait.until(
                 ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@name=\"search_query\"]"))
-        ).sendKeys("Backend Java");
+        ).sendKeys("Sourate Al Asr");
         Thread.sleep(500);
         wait.until(
                 ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[@title=\"Rechercher\"]"))
@@ -124,7 +118,7 @@ public class YoutubeTest {
                 driver1.executeScript("arguments[0].scrollIntoView(true);", video); // Défiler jusqu'à l'élément
                 Thread.sleep(500);
                 try {
-                    duree = video.findElement(By.xpath(".//a[@id=\"video-title\"]"));
+                    duree = video.findElement(By.xpath(".//badge-shape"));
                     elText =  video.findElement(By.xpath(".//div[@class=\"text-wrapper style-scope ytd-video-renderer\"]"));
                     System.out.println("Duree : "+duree.getText()+ "Text : "+elText.getText());
                     viewsPattern = Pattern.compile("(\\d+(,\\d+)?\\s?[kKmM]?)\\s?vues");
@@ -164,15 +158,36 @@ public class YoutubeTest {
                                 ExpectedConditions.visibilityOfElementLocated(By.xpath("//input[@id=\"submit-button\"]"))
                         ).click();
                         Thread.sleep(2000);
+                        System.out.println("TEST 011111");
+                        try {
+                            driver1.switchTo().window(driver1.getWindowHandles().toArray()[2].toString());
+                            driver1.close();
+                        }
+                        catch (NoSuchWindowException e){
+                            System.out.println("Error : Tests");
+                        }
+                        System.out.println("TEST 02222222222");
+
+                        Thread.sleep(2000);
+                        driver1.navigate().refresh();
+                        System.out.println("TEST 03333333333");
+
+                        try {
+                            wait.until(
+                                    ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@id=\"downloadButton\"]"))
+                            ).click();
+                        }catch (NoSuchElementException | NotFoundException e){
+                            driver1.navigate().refresh();
+                            wait.until(
+                                    ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@id=\"downloadButton\"]"))
+                            ).click();
+                        }
+                        System.out.println("TEST 0444444444444");
 
                         driver1.switchTo().window(driver1.getWindowHandles().toArray()[2].toString());
                         driver1.close();
-                        Thread.sleep(2000);
-                        wait.until(
-                                ExpectedConditions.visibilityOfElementLocated(By.xpath("//a[@id=\"downloadButton\"]"))
-                        ).click();
-                        driver1.switchTo().window(driver1.getWindowHandles().toArray()[2].toString());
-                        driver1.close();
+                        System.out.println("TEST 0555555555555");
+
                         Thread.sleep(1000);
                         driver1.close();
                         Thread.sleep(convertToSeconds(duree.getText())*1000);
@@ -189,6 +204,7 @@ public class YoutubeTest {
         }while (!isRelevant(convertToViews(viewsText),convertToYears(elapsedTime)));
         System.out.println("Taille finale : "+saveOld.size());
     }
+
 }
 
 

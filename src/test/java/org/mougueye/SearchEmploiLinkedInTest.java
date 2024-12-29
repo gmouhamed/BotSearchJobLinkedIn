@@ -8,6 +8,7 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.net.MalformedURLException;
 import java.time.Duration;
 import java.util.List;
 @Tag("searchEmploiTest")
@@ -102,7 +103,7 @@ public class SearchEmploiLinkedInTest {
     }
 
     @Test
-    public void searchEmploi() throws InterruptedException {
+    public void searchEmploi() throws InterruptedException, MalformedURLException {
         LoginLinkedInTest.login();
         EdgeDriver driver1 = LoginLinkedInTest.getDriver1();
         WebDriverWait wait =new WebDriverWait(driver1, Duration.ofSeconds(20));

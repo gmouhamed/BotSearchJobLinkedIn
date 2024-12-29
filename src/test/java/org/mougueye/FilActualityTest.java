@@ -10,6 +10,7 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.net.MalformedURLException;
 import java.time.Duration;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class FilActualityTest {
         return element.getText().contains("Test") ||  element.getText().contains("test") || element.getText().contains("QA") || element.getText().contains("Testeur") || element.getText().contains("Automatisation");
     }
     @Test
-    public void getListPostPerninent() throws InterruptedException {
+    public void getListPostPerninent() throws InterruptedException, MalformedURLException {
         LoginLinkedInTest.login();
         EdgeDriver driver1 =LoginLinkedInTest.getDriver1();
         WebDriverWait wait =new WebDriverWait(driver1, Duration.ofSeconds(30));
